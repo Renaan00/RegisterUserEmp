@@ -5,13 +5,14 @@ header("Content-type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (isset($data["nome"]) && !empty($data["nome"]) && isset($data["senha"]) && !empty($data["senha"])) {
+if (isset($data["nomeLog"]) && !empty($data["nomeLog"]) && isset($data["senhaLog"]) && !empty($data["senhaLog"])) {
     require "Connection.php";
-    $nome = $data["nome"];
-    $senha = $data["senha"];
+    $nome = $data["nomeLog"];
+    $senha = $data["senhaLog"];
     $sql = $conn->query("SELECT * FROM cadastro WHERE nome = '$nome' AND senha = '$senha'");
     if ($sql->rowCount() > 0) {
-        $getUser = $sql->fetchAll(PDO::FETCH_ASSOC);
+        $getUser = $sql->fetchAll(PDO::FETCH_ASSOC)[0];
+        $id = $getUser["id_user"];
         $result = true;
     }
     else {
@@ -21,4 +22,4 @@ if (isset($data["nome"]) && !empty($data["nome"]) && isset($data["senha"]) && !e
 else {
     $result = false;
 }
-echo json_encode(["sucess"=>$result]);
+echo json_encode(["sucess"=>$result, "id"=>$id]);

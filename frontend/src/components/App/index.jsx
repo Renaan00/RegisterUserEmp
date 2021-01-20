@@ -1,25 +1,21 @@
-import {React, useState} from 'react';
+import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
 import API from '../../axios/Api';
 
 const App = () => {
+    const history = useHistory();
     const [msg, setMsg] = useState(true);
+    const [entrar, setEntrar] = useState();
     const [cadastro, setCadastro] = useState({
         nome: "",
-        email: "",
+        email: "", 
         senha: ""
     });
     const [login, setLogin] = useState({
         nome: "",
         senha: ""
     });
-    // Verificar
-    /*useEffect(async () => {
-        const url = "http://emp/backend/Login.php";
-        const resposta = await fetch(url);
-        //console.log(resposta);
-        setTeste (await resposta.json());
-    }, []);*/
-    //console.log(teste);
+   
     const controleCadastro = (event) => {
         setCadastro({
             ...cadastro,
@@ -27,7 +23,6 @@ const App = () => {
         });
     }
 
-    // Registrar
     async function upCadastro(event){
         event.preventDefault();
 
@@ -58,8 +53,22 @@ const App = () => {
 
         await API.post('/Login.php', login)
         .then((response) => { 
-            console.log(response.data.sucess);
+            if(response.data.sucess !== undefined) {
+                setEntrar(true);
+                const idUser = response.data.id;
+                goMenu(idUser);
+            } else {
+                setEntrar(false);
+            }
         })
+    }
+
+    function goMenu (id) {
+        if (entrar === true) {
+            history.push(`/Menu/${id}`);
+        } else {
+            history.push("/");
+        }
     }
 
     return (
@@ -73,7 +82,7 @@ const App = () => {
                             <label htmlFor="email">E-mail:</label><br/>
                             <input onChange={controleCadastro} type="email" name="email" id="email"></input><br/>
                             <label htmlFor="senha">Senha:</label><br/>
-                            <input onChange={controleCadastro} type="password" name="senha" id="senha"></input><br/><br/>
+                            <input onChange={controleCadastro} type="password" name="senha" id="senha"></input><br/>
                             <button className="btn btn-success">Cadastrar</button>
                             <button type="reset" className="btn btn-success m-2">Limpar</button>
                     </fieldset>
@@ -89,13 +98,15 @@ const App = () => {
                     <fieldset>
                         <legend>Login</legend>
                             <label htmlFor="nome">User/Nick:</label><br/>
-                            <input onChange={controleLogin} type="text" name="nome" id="nome"></input><br/>
+                            <input onChange={controleLogin} type="text" name="nomeLog" id="nomeLog"></input><br/>
                             <label htmlFor="senha">Senha:</label><br/>
-                            <input onChange={controleLogin} type="password" name="senha" id="senha"></input><br/><br/>
+                            <input onChange={controleLogin} type="password" name="senhaLog" id="senhaLog"></input><br/><br/>
                             <button className="btn btn-success">Jogar</button>
+                            <button type="reset" className="btn btn-success m-2">Limpar</button>
                     </fieldset>
                 </form>
             </main>
+    
         </>
     );
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export default axios.create ({
-    baseURL:"http://localhost/test-renan/backend/"
+    baseURL:"http://localhost/cadastroEmp/backend/"
 })
